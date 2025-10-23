@@ -1,0 +1,216 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id              String           @id @default(uuid())
+  name            String?
+  email           String           @unique
+  image           String?
+  role            Role             @default(USER)
+  password        String
+  emailVerified   Boolean          @default(false)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  lastLogin       DateTime?
+  streakCount     Int              @default(0)
+  maxStreakCount  Int              @default(0)
+  firebaseUid     String?          @unique
+  authProvider    String?
+  gender          Gender?
+  dateOfBirth     DateTime?
+  bio             String?
+  githubProfile   String?
+  linkedinProfile String?
+  Playlists       Playlist[]
+  problems        Problem[]
+  solvedProblems  ProblemSolved[]
+  Revision        Revision[]
+  submissions     Submission[]
+  discussionLikes DiscussionLike[]
+  discussions     Discussion[]
+}
+
+model Problem {
+  id                 String            @id @default(uuid())
+  leetcodeId         Int?              @unique
+  title              String
+  description        String
+  difficulty         Difficulty
+  isPremium          Boolean           @default(false)
+  solutionLink       String?
+  acceptanceRate     Float?
+  frequency          Float?
+  url                String?
+  discussCount       Int?
+  accepted           Int?
+  submissions        Int?
+  companies          String[]
+  relatedTopics      String[]
+  likes              Int?
+  dislikes           Int?
+  rating             Float?
+  askedByFaang       Boolean           @default(false)
+  similarQuestions   String?
+  tags               String[]
+  companyTags        String[]
+  userId             String?
+  examples           Json?
+  constraints        String?
+  hints              String?
+  editorial          String?
+  testcases          Json?
+  codeSnippets       Json?
+  referenceSolutions Json?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  user               User?             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  problemsPlaylist   ProblemPlaylist[]
+  solvedBy           ProblemSolved[]
+  Revision           Revision[]
+  submission         Submission[]
+  discussions        Discussion[]
+}
+
+model Submission {
+  id            String           @id @default(uuid())
+  problemId     String
+  userId        String
+  sourceCode    Json
+  language      String
+  stdin         String?
+  stdout        String?
+  stderr        String?
+  compileOutput String?
+  status        String
+  memory        String?
+  time          String?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  problem       Problem          @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  testCases     TestCaseResult[]
+}
+
+model TestCaseResult {
+  id            String     @id @default(uuid())
+  submissionId  String
+  testCase      Int
+  passed        Boolean
+  stdout        String?
+  expected      String?
+  stderr        String?
+  compileOutput String?
+  status        String
+  memory        String?
+  time          String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  submission    Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+
+  @@index([submissionId])
+}
+
+model ProblemSolved {
+  id        String   @id @default(uuid())
+  userId    String
+  problemId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  problem   Problem  @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, problemId])
+}
+
+model Playlist {
+  id          String            @id @default(uuid())
+  name        String
+  description String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  userId      String
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  problems    ProblemPlaylist[]
+
+  @@unique([name, userId])
+}
+
+model ProblemPlaylist {
+  id         String   @id @default(uuid())
+  problemId  String
+  playlistId String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  playlist   Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+  problem    Problem  @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@unique([problemId, playlistId])
+}
+
+model Revision {
+  id        String   @id @default(uuid())
+  userId    String
+  problemId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  problem   Problem  @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, problemId])
+  @@index([userId])
+}
+
+model Discussion {
+  id        String           @id @default(cuid())
+  content   String
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  problemId String
+  authorId  String
+  parentId  String?
+  likes     DiscussionLike[]
+  author    User             @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  parent    Discussion?      @relation("DiscussionReplies", fields: [parentId], references: [id])
+  replies   Discussion[]     @relation("DiscussionReplies")
+  problem   Problem          @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@map("discussions")
+}
+
+model DiscussionLike {
+  id           String     @id @default(cuid())
+  createdAt    DateTime   @default(now())
+  discussionId String
+  userId       String
+  discussion   Discussion @relation(fields: [discussionId], references: [id], onDelete: Cascade)
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([discussionId, userId])
+  @@map("discussion_likes")
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+  PREFER_NOT_TO_SAY
+}

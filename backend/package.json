@@ -1,0 +1,44 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "populate-leetcode": "node src/scripts/populate_leetcode_problems.js",
+    "populate-leetcode-force": "node src/scripts/populate_leetcode_problems.js --force",
+    "clear-leetcode": "node src/scripts/populate_leetcode_problems.js --clear"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "description": "",
+  "dependencies": {
+    "@liveblocks/node": "^2.24.3",
+    "@prisma/client": "^6.14.0",
+    "axios": "^1.9.0",
+    "bcryptjs": "^3.0.2",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "csv-parser": "^3.2.0",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "express-rate-limit": "^7.5.1",
+    "firebase": "^11.9.1",
+    "firebase-admin": "^13.4.0",
+    "js-yaml": "^4.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.17.0",
+    "mongoose": "^8.15.2",
+    "node-fetch": "^2.7.0",
+    "nodemailer": "^7.0.5",
+    "nodemon": "^3.1.10",
+    "openai": "^4.104.0",
+    "postgres": "^3.4.7"
+  },
+  "devDependencies": {
+    "prisma": "^6.14.0"
+  }
+}
