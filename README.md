@@ -1,6 +1,6 @@
-# 🚀 CodeFusion
+# 🚀 CodeSync
 
-**CodeFusion** is a modern, LeetCode-like collaborative coding platform where users can solve problems, run code with Judge0, get AI-powered help (powered by GPT-5), and collaborate in real-time with Liveblocks. The platform features a professional, animated UI using GSAP and Framer Motion for a world-class user experience.
+**CodeSync** is a modern, LeetCode-like collaborative coding platform where users can solve problems, run code with Judge0, get AI-powered help (powered by GPT-5), and collaborate in real-time with Liveblocks. The platform features a professional, animated UI using GSAP and Framer Motion for a world-class user experience.
 
 This project was built for the **Co-Creating with GPT-5** hackathon organized by [lablab.ai](https://lablab.ai/event/co-creating-with-gpt-5).
 
